@@ -1,0 +1,38 @@
+module LED_Numbers;
+
+var num, text, concat:string;
+var leds:array 10 of string;
+var led:array 3 of string;
+var i, j, z, len, lenled:integer; 
+
+begin
+	leds[0]:=" _  ,| | ,|_| ,";
+	leds[1]:="  ,| ,| ,";
+	leds[2]:=" _  , _| ,|_  ,";
+	leds[3]:="_  ,_| ,_| ,";
+	leds[4]:="    ,|_| ,  | ,";
+	leds[5]:=" _  ,|_  , _| ,";
+	leds[6]:=" _  ,|_  ,|_| ,";
+	leds[7]:="_   , |  , |  ,";
+	leds[8]:=" _  ,|_| ,|_| ,";
+	leds[9]:=" _  ,|_| , _| ,";
+	write("Enter a number: ");readln(num);
+	len:=num.Length;
+	for j:=0 to len - 1 do
+		i:=0;
+		text:=leds[integer(num[j])-48];
+		lenled:=text.Length;
+		for z:= 0 to lenled - 1 do
+			if text[z] # "," then
+				concat:= concat + string(text[z]);
+			else
+				led[i]:=led[i] + concat;
+				concat:="";
+				i:= i + 1;
+			end;
+		end;
+	end; 
+	writeln(led[0]);
+	writeln(led[1]);
+	writeln(led[2]);
+end LED_Numbers.
