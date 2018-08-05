@@ -3,11 +3,11 @@ Collection of LED_Numbers app written in different programming languages.
 
 Basically when you input a number like 1977 the output will be like this...
 
+```
    _  _  _
 | |_|  |  |
 |   |  |  |
-
-Ok...Github makes it look weird...you get the idea, don't you?
+```
 
 Keep in mind that everytime I learn a new programming language, I code this application...so that means that obviously I'm not going to use the best practices or it's going to be most performance ready app...
 
@@ -19,3 +19,4 @@ I'm sure a lot of people are going to send me "Corrections" or "Better ways to u
 
 --
 Blag.
+git
