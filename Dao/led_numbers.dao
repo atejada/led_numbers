@@ -1,0 +1,29 @@
+invar leds = {0 => {' _  ','| | ','|_| '},
+              1 => {'  ','| ','| '},
+              2 => {' _  ',' _| ','|_  '},
+              3 => {'_  ','_| ','_| '},
+              4 => {'    ','|_| ','  | '},
+              5 => {' _  ','|_  ',' _| '},
+              6 => {' _  ','|_  ','|_| '},
+              7 => {'_   ',' |  ',' |  '},
+              8 => {' _  ','|_| ','|_| '},
+              9 => {' _  ','|_| ',' _| '}}
+              
+io.write('Enter a number: ')
+
+invar num = io.read()
+
+var i = 0
+while(true){
+  var j = 0
+  while(true){
+    io.write(leds[(int)num[j]-48][i])
+    if(j == num.size() - 2) break
+    j += 1
+  }
+  io.writeln("")
+  if(i == 2) break
+  i += 1
+}
+
+io.writeln("")
