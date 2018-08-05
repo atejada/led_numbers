@@ -17,6 +17,6 @@ Having a 20 lines code in 3 lines it's cool...but might be too complicate and sc
 
 I'm sure a lot of people are going to send me "Corrections" or "Better ways to use the language capabilities" but...I'm not planning to implement any of those...my codes are mine and I believe they serve a purpose...this are not "Open Source" applications...but snippets to show newcomers how some weird and obscure programming languages look like...
 
---
 Blag.
+
 git
