@@ -1,0 +1,23 @@
+leds[0] = " _  ,| | ,|_| " 
+leds[1] = "  ,| ,| "
+leds[2] = " _  , _| ,|_  "
+leds[3] = "_  ,_| ,_| "
+leds[4] = "    ,|_| ,  | "
+leds[5] = " _  ,|_  , _| "
+leds[6] = " _  ,|_  ,|_| "
+leds[7] = "_   , |  , |  "
+leds[8] = " _  ,|_| ,|_| "
+leds[9] = " _  ,|_| , _| "
+
+TextWindow.Write("Enter a number: ")
+number = TextWindow.Read()
+
+For i = 0 To 3
+  For j = 1 To Text.GetLength(number)
+      num = Text.GetSubText(number,j,1)
+      line = LDText.Split(leds[num],",")
+      TextWindow.Write(line[i])
+  EndFor 
+  TextWindow.WriteLine("")
+EndFor
+TextWindow.WriteLine("")
