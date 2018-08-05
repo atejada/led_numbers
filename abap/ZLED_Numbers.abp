@@ -1,0 +1,73 @@
+REPORT zled_numbers.
+
+TYPES: BEGIN OF ty_lines,
+       line TYPE string,
+       END OF ty_lines.
+
+DATA: t_lines TYPE STANDARD TABLE OF ty_lines,
+      s_xline type string,
+      s_len type string,
+      s_index(2) type c,
+      num_counter TYPE i.
+FIELD-SYMBOLS: <fs_lines> LIKE LINE OF t_lines.
+
+SELECTION-SCREEN BEGIN OF BLOCK params.
+PARAMETERS: p_number TYPE string.
+SELECTION-SCREEN END OF BLOCK params.
+
+START-OF-SELECTION.
+  PERFORM load_data.
+  num_counter = 0.
+  DO 3 TIMES.
+    s_len = 0.
+    DO strlen( p_number ) - 1 TIMES.
+      s_index = p_number+s_len(1) + 1.
+      read table t_lines INDEX s_index ASSIGNING <fs_lines>.
+      perform extract_string using <fs_lines>-line num_counter CHANGING s_xline.
+      REPLACE ALL OCCURRENCES OF '%' IN s_xline WITH ` ` IN CHARACTER MODE.
+      write: s_xline.
+      s_len = s_len + 1.
+    ENDDO.
+    num_counter = num_counter + 1.
+    write:/ ''.
+  ENDDO.
+
+*&---------------------------------------------------------------------*
+*&      Form  load_data
+*&---------------------------------------------------------------------*
+FORM load_data.
+  PERFORM add_lines USING '   _,| |%,|_|%'.
+  PERFORM add_lines USING '%%,|%,|%'.
+  PERFORM add_lines USING '   _, _|%,|_%%'.
+  PERFORM add_lines USING '  _,_|%,_|%'.
+  PERFORM add_lines USING '%%%%,|_|%,  |%'.
+  PERFORM add_lines USING '   _,|_%%, _|%'.
+  PERFORM add_lines USING '   _,|_%%,|_|%'.
+  PERFORM add_lines USING '  _,%|%,%|%'.
+  PERFORM add_lines USING '%%%_,|_|%,|_|%'.
+  PERFORM add_lines USING '   _,|_|%, _|%'.
+ENDFORM.                    "load_data
+
+*&---------------------------------------------------------------------*
+*&      Form  add_lines
+*&---------------------------------------------------------------------*
+FORM add_lines USING p_line.
+  APPEND INITIAL LINE TO t_lines ASSIGNING <fs_lines>.
+  <fs_lines>-line = p_line.
+ENDFORM.                    "add_lines
+
+form extract_string using p_line p_index
+                    CHANGING p_xline.
+  data: line1 type string,
+        line2 type string,
+        line3 type string.
+  split p_line at ',' into line1 line2 line3.
+  case p_index.
+    when 0.
+      p_xline = line1.
+    when 1.
+      p_xline = line2.
+    when 2.
+      p_xline = line3.
+  endcase.
+endform.
