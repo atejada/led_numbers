@@ -1,0 +1,26 @@
+BEGIN
+	[] STRING led = (" _  | | |_| ","     |   |  "," _   _| |_  ",
+					 "_   _|  _|  ","    |_|   | "," _  |_   _| ",
+					 " _  |_  |_| ","_    |   |  "," _  |_| |_| ",
+					 " _  |_|  _| ");
+	STRING line_1, line_2, line_3, val;
+	print("Enter a number: ");
+	INT num = read int;
+	
+	PROC digits = (INT number)VOID:
+		IF number > 0 THEN
+			digits(number % 10);
+			val := led[(number MOD 10) + 1];
+			line_1 := line_1 + val[1:4];
+			line_2 := line_2 + val[5:8];
+			line_3 := line_3 + val[9:12]
+		FI;
+	
+	digits(num);
+	
+	print(line_1);
+	print(newline);
+	print(line_2);
+	print(newline);
+	print(line_3)	
+END
