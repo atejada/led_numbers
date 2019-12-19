@@ -1,0 +1,26 @@
+* LED Numbers
+
+		led = array(10, '')
+		led<1> = ' _  | | |_| ' ; led<2> = '     |   |  '
+		led<3> = ' _   _| |_  ' ; led<4> = '_   _|  _|  '
+		led<5> = '    |_|   | ' ; led<6> = ' _  |_   _| '
+		led<7> = ' _  |_  |_| ' ; led<8> = '_    |   |  '
+		led<9> = ' _  |_| |_| ' ; led<10> = ' _  |_|  _| '
+	
+		output = "Enter a number: "
+		num = input
+		i = 0
+digits	num len(i) len(1) . digit				:f(done)
+		digit = digit + 1
+		led<digit> len(0) len(4) . line_aux
+		line1 = line1 line_aux
+		led<digit> len(4) len(4) . line_aux
+		line2 = line2 line_aux
+		led<digit> len(8) len(4) . line_aux
+		line3 = line3 line_aux					
+		i = i + 1								:s(digits)	
+done	output = line1
+		output = line2
+		output = line3
+		output = ''	
+end
