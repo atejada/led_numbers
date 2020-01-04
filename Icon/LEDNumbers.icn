@@ -1,0 +1,35 @@
+procedure main()
+	local leds, num, line1, line2, line3
+	local i, j
+	i := 1
+	j := 2
+	line1 := ""
+	line2 := ""
+	line3 := ""
+	leds := table()
+	leds["0"] := " _  ,| | ,|_| "
+	leds["1"] := "    ,|   ,|   "
+	leds["2"] := " _  , _| ,|_  "
+	leds["3"] := " _  , _| , _| " 
+	leds["4"] := "    ,|_| ,  | "
+	leds["5"] := " _  ,|_  , _| "
+	leds["6"] := " _  ,|_  ,|_| "
+	leds["7"] := " _  ,  | ,  | "
+	leds["8"] := " _  ,|_| ,|_| "
+	leds["9"] := " _  ,|_| , _| "
+	
+	write("Enter a number: ")
+	num := read()
+	
+	while i <= *num do{
+		line1 ||:= leds[num[i:j]][1:4]
+		line2 ||:= leds[num[i:j]][6:9]
+		line3 ||:= leds[num[i:j]][11:14]
+		i +:= 1
+		j +:= 1
+	}
+	
+	write(line1)
+	write(line2)
+	write(line3)
+end
