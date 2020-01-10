@@ -1,0 +1,46 @@
+begin
+	integer i, iNum;
+	text Num, Line1, Line2, Line3, val;
+	text array Led(1:10);
+
+	Led(1) :- " _  | | |_| ";
+	Led(2) :- "    |   |   ";
+	Led(3) :- " _   _| |_  ";
+	Led(4) :- " _   _|  _| ";
+	Led(5) :- "    |_|   | ";
+	Led(6) :- " _  |_   _| ";
+	Led(7) :- " _  |_  |_| ";
+	Led(8) :- " _    |   | ";
+	Led(9) :- " _  |_| |_| ";
+	Led(10) :- " _  |_|  _| ";
+
+	i := 1;
+
+	OutText("Enter a number: ");
+	OutImage;
+	InImage;
+	inspect SysIn do
+	begin
+		Num :- Blanks(Image.Length);
+		Num := Image
+	end;	
+	Num :- Num.Strip;	
+	
+	while i <= Num.Length do
+		begin
+			iNum := Num.sub(i,1).GetInt + 1;
+			val :- Led(iNum);
+			Line1 :- Line1 & val.sub(1,4);
+			Line2 :- Line2 & val.sub(5,4);
+			Line3 :- Line3 & val.sub(9,4);
+			i := i + 1;
+		end;
+	
+	OutText(Line1);
+	OutImage;
+	OutText(Line2);
+	OutImage;
+	OutText(Line3);
+	OutImage;
+	OutImage;	
+end
