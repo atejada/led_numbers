@@ -1,0 +1,59 @@
+Let the led at 0 be " _  ,| | ,|_| "
+Let the led at 1 be "  ,| ,| "
+Let the led at 2 be " _  , _| ,|_  "
+Let the led at 3 be "_  ,_| ,_| "
+Let the led at 4 be "    ,|_| ,  | "
+Let the led at 5 be " _  ,|_  , _| "
+Let the led at 6 be " _  ,|_  ,|_| "
+Let the led at 7 be "_   , |  , |  "
+Let the led at 8 be " _  ,|_| ,|_| "
+Let the led at 9 be " _  ,|_| , _| "
+
+Night takes Moon and Sky
+Put Sky into Big Sky
+While Big Sky is less than Moon
+Put Big Sky times 2 into Big Sky
+    
+While Big Sky is as high as Sky
+If Moon is as high as Big Sky
+Put Moon minus Big Sky into Moon
+    
+Put Big Sky over 2 into Big Sky
+    
+Give back Moon
+
+
+say "Enter a number: "
+Listen to the sound
+The moon was a complexity
+The sun was 0
+The sunset was 1
+The zero was 0
+The one was 1
+The two was 2
+While the sound is higher than nothing
+Put Night taking the sound, the moon into the stars
+Put the sound over the moon into the sound
+Turn down the sound
+Let the rock at the sunset be the stars
+Build the sunset up
+
+
+Put the sunset without 1 into rocker
+While rocker is higher than nothing
+Put the rock at rocker into the line
+Put the led at the line into the stone
+Cut the stone into pebbles with ","
+Let the first at the sun be pebbles at the zero
+Let the second at the sun be pebbles at the one
+Let the third at the sun be pebbles at the two
+Knock rocker down
+Build the sun up
+
+
+Unite the first into uno with " "
+Unite the second into dos with " "
+Unite the third into tres with " "
+Shout uno
+Shout dos
+Shout tres
