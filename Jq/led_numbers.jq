@@ -13,4 +13,4 @@ def segments: [
 
 def digits: tostring | split("")[] | tonumber;
 
-[segments[digits]] | transpose | map(join(""))[]
+[segments[digits]] | transpose[] | join("")
