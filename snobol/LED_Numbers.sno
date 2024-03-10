@@ -18,7 +18,7 @@ digits	num len(i) len(1) . digit				:f(done)
 		line2 = line2 line_aux
 		led<digit> len(8) len(4) . line_aux
 		line3 = line3 line_aux					
-		i = i + 1								:s(digits)	
+		i = i + 1					:s(digits)	
 done	output = line1
 		output = line2
 		output = line3
