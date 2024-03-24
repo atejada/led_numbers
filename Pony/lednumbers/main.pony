@@ -4,15 +4,15 @@ actor Main
 	new create(env: Env) =>
 		_env = env
 		let leds: Array[Array[String]] = [[" _  ","| | ","|_| "],
-										  ["  ","| ","| "],
-										  [" _  "," _| ","|_  "],
-										  ["_  ","_| ","_| "],
-										  ["    ","|_| ","  | "],
-										  [" _  ","|_  "," _| "],
-										  [" _  ","|_  ","|_| "],
-										  ["_   "," |  "," |  "],
-										  [" _  ","|_| ","|_| "],
-										  [" _  ","|_| "," _| "]]
+						  ["  ","| ","| "],
+						  [" _  "," _| ","|_  "],
+						  ["_  ","_| ","_| "],
+						  ["    ","|_| ","  | "],
+						  [" _  ","|_  "," _| "],
+						  [" _  ","|_  ","|_| "],
+						  ["_   "," |  "," |  "],
+						  [" _  ","|_| ","|_| "],
+						  [" _  ","|_| "," _| "]]
 		var num: String = try env.args(1) else "" end
 		var i: I64 = 0
 		var j: I64 = 0
@@ -21,7 +21,7 @@ actor Main
 		while i < 3 do
 			while j < sizec do
 				try line = line.insert(line.size().string().i64(),
-									   leds(num.substring(j,j).u64())(i.string().u64())) else "" end
+						       leds(num.substring(j,j).u64())(i.string().u64())) else "" end
 				j = j + 1
 			end
 			i = i + 1
