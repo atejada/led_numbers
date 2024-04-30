@@ -1,0 +1,28 @@
+uses "console", "regexp", "string";
+
+array leds;
+string num;
+number i = 0, j = 0;
+array line;
+
+leds["0"] = " _  ,| | ,|_| ";
+leds["1"] = "  ,| ,| ";
+leds["2"] = " _  , _| ,|_  ";
+leds["3"] = "_  ,_| ,_| ";
+leds["4"] = "    ,|_| ,  | ";
+leds["5"] = " _  ,|_  , _| ";
+leds["6"] = " _  ,|_  ,|_| ";
+leds["7"] = "_   , |  , |  ";
+leds["8"] = " _  ,|_| ,|_| ";
+leds["9"] = " _  ,|_| , _| ";
+
+Console.println("Enter a number: ");
+num = Console.readln();
+
+for(i = 0; i < 3; i++){
+    for(j = 0; j < String.length(num) - 1; j++){
+        line = Regexp.split(',', leds[String.toNumber(num[j])]);
+        Console.print(line[i]);
+    }
+    Console.println("");
+}
