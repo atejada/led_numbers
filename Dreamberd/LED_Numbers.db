@@ -1,0 +1,24 @@
+const const led_1 = [" _  ", "  ", " _  ", "_  ", "    ", " _  ", " _  ", "_   ", " _  ", " _  "]!
+const const led_2 = ["| | ", "| ", " _| ", "_| ", "|_| ", "|_  ", "|_  ", " |  ", "|_| ", "|_| "]!
+const const led_3 = ["|_| ", "| ", "|_  ", "_| ", "  | ", " _| ", "|_| ",  " |  ", "|_| ", " _| "]!
+
+const const num = "1593"!
+
+const const len = num.length - 1!
+var var i_num = 0!
+var var counter = -1!
+var var line_1 = ""!
+var var line_2 = ""!
+var var line_3 = ""!
+
+when (counter < len) {
+   i_num = Number(num[counter])!
+   line_1 = line_1 + led_1[i_num - 1])!
+   line_2 = line_2 + led_2[i_num - 1])!
+   line_3 = line_3 + led_3[i_num - 1])!
+   counter = counter + 1!
+}
+
+print(line_1)!
+print(line_2)!
+print(line_3)!
