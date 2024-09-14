@@ -1,0 +1,23 @@
+leds = {"0": " _  ,| | ,|_| ",
+        "1": "    , |  , |  ",
+        "2": " _  , _| ,|_  ",
+        "3": " _  , _| , _| ",
+        "4": "    ,|_| ,  | ",
+        "5": " _  ,|_  , _| ",
+        "6": " _  ,|_  ,|_| ",
+        "7": "_   , |  , |  ",
+        "8": " _  ,|_| ,|_| ",
+        "9": " _  ,|_| , _| "}
+
+echo("Enter a number: ")
+num = stdin()
+
+indices = 0..(len(num) - 1)
+for i in [0, 1, 2] {
+line = ""
+  for j in indices{
+    lines = leds[num[j]].split(",")
+    line = line + lines[i]
+  }
+  echo(line)
+}
