@@ -1,0 +1,58 @@
+let leds = @[
+    zero: " _  ,| | ,|_| ",
+    one: "  ,| ,| ",
+    two: " _  , _| ,|_  ",
+    three:"_  ,_| ,_| ",
+    four:"    ,|_| ,  | ",
+    five:" _  ,|_  , _| ",
+    six:" _  ,|_  ,|_| ",
+    seven:"_   , |  , |  ",
+    eight:" _  ,|_| ,|_| ",
+    nine:" _  ,|_| , _| ",
+]
+
+let get_key = function (x)
+    if x == 0 then
+      return "zero"
+    end
+    if x == 1 then
+      return "one"
+    end
+    if x == 2 then
+      return "two"
+    end
+    if x == 3 then
+      return "three"
+    end
+    if x == 4 then
+      return "four"
+    end
+    if x == 5 then
+      return "five"
+    end
+    if x == 6 then
+      return "six"
+    end
+    if x == 7 then
+      return "seven"
+    end
+    if x == 8 then
+      return "eight"
+    end
+    if x == 9 then
+      return "nine"
+    end
+end
+
+let num = std.read("Enter a number: ")
+let line = ""
+
+for i in std.range(0, 3, 1) do
+  line = ""
+  for item in std.iter(std.trim(num)) do
+    let digit = get_key(std.int(std.to_string(item)))
+    let lines = std.split(leds[digit], ",")
+    line = line ++ lines[i]
+  end
+  std.print(line)
+end
