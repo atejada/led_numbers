@@ -1,0 +1,31 @@
+DATA:
+  leds IS TEXT MAP
+  num IS TEXT
+  digits IS TEXT LIST
+  lines IS TEXT LIST
+  digit IS TEXT
+  i is NUMBER
+
+PROCEDURE:
+  STORE " _  ,| | ,|_| " IN leds:0
+  STORE "  ,| ,| " IN leds:1
+  STORE " _  , _| ,|_  " IN leds:2
+  STORE "_  ,_| ,_| " IN leds:3
+  STORE "    ,|_| ,  | " IN leds:4
+  STORE " _  ,|_  , _| " IN leds:5 
+  STORE " _  ,|_  ,|_| " IN leds:6
+  STORE "_   , |  , |  " IN leds:7
+  STORE " _  ,|_| ,|_| " IN leds:8
+  STORE " _  ,|_| , _| " IN leds:9
+
+  DISPLAY "Enter a number: "
+  ACCEPT num
+  SPLIT num BY "" IN digits
+
+  FOR i FROM 0 TO 3 STEP 1 DO
+    FOR EACH digit IN digits DO
+        SPLIT leds:digit BY "," IN lines
+        DISPLAY lines:i
+    REPEAT
+    DISPLAY crlf
+REPEAT
