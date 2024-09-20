@@ -1,0 +1,39 @@
+use core {map, println, stdio, conv, print}
+use core.io { Reader }
+use core {*}
+
+main :: () {
+
+  leds := Map.literal(i32, str, .[
+             .{0, " _  ,| | ,|_| "},
+             .{1, "    , |  , |  "},
+             .{2, " _  , _| ,|_  "},
+             .{3, " _  , _| , _| "},
+             .{4, "    ,|_| ,  | "},
+             .{5, " _  ,|_  , _| "},
+             .{6, " _  ,|_  ,|_| "},
+             .{7, "_   , |  , |  "},
+             .{8, " _  ,|_| ,|_| "},
+             .{9, " _  ,|_| , _| "},
+  ]);
+
+    print("Enter a number: ");
+    stdin_reader := Reader.make(&stdio.stream);
+    defer Reader.free(&stdin_reader);
+    num := stdin_reader->read_line();
+    
+    line_1 := "";
+    line_2 := "";
+    line_3 := "";
+    
+    for j in 0 .. num.length - 1 {
+      index := cast(i32) num[j] - 48
+      line := leds[index] ?? ""
+      line_1 = string.concat(line_1, line[0..3])
+      line_2 = string.concat(line_2, line[5..8])
+      line_3 = string.concat(line_3, line[10..13])
+    }
+    println(line_1)
+    println(line_2)
+    println(line_3)
+}
