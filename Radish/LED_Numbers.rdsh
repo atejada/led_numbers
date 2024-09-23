@@ -1,0 +1,53 @@
+dig leds plant [" _  ,| | ,|_| ", 
+                "    , |  , |  ", 
+                " _  , _| ,|_  ", 
+                " _  , _| , _| ",
+                "    ,|_| ,  | ",
+                " _  ,|_  , _| ",
+                " _  ,|_  ,|_| ",
+                "_   , |  , |  ",
+                " _  ,|_| ,|_| ",
+                " _  ,|_| , _| "]
+
+dig to_num plant tool(digit) {
+ switch(digit){
+   case "0"
+     harvest leds[0]
+   case "1"
+     harvest leds[1]
+   case "2"
+     harvest leds[2]
+   case "3"
+     harvest leds[3]
+   case "4"
+     harvest leds[4]
+   case "5"
+     harvest leds[5]
+   case "6"
+     harvest leds[6]
+   case "7"
+     harvest leds[7]
+   case "8"
+     harvest leds[8]
+   case "9"
+     harvest leds[9]
+ }
+}
+
+holler.write("Enter a number: ")
+holler.read() => num
+
+dig line_1 plant ""
+dig line_2 plant ""
+dig line_3 plant ""
+
+for(dig i plant 0, i < num.length, i++) {
+  dig digit plant to_num(num[i])
+  line_1 plant line_1 + digit[0] + digit[1] + digit[2] + digit[3]
+  line_2 plant line_2 + digit[5] + digit[6] + digit[7] + digit[8]
+  line_3 plant line_3 + digit[10] + digit[11] + digit[12] + digit[13]
+}
+
+holler(line_1)
+holler(line_2)
+holler(line_3)
