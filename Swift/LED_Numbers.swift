@@ -1,6 +1,6 @@
 import Foundation
 
-var leds: [String: String] = [
+var leds: [Character: String] = [
     "0": " _  ,| | ,|_| ",
     "1": "  ,| ,| ",
     "2": " _  , _| ,|_  ",
@@ -17,7 +17,7 @@ let num = readLine(strippingNewline: true)
 
 for i in 0...2{
   for character in num!{
-    let line : String = leds[String(character)] ?? ""
+    let line : String = leds[character] ?? ""
     let lines : [String] = line.components(separatedBy: ",")
     print(lines[i], terminator: "")
   }
