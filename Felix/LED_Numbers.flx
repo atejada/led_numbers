@@ -1,0 +1,28 @@
+var leds = ([" _  ,| | ,|_| ",
+             "    , |  , |  ",
+             " _  , _| ,|_  ",
+             "_   , _| , _| ",
+             "    ,|_| ,  | ",
+             " _  ,|_  , _| ",
+             " _  ,|_  ,|_| ",
+             "_   , |  , |  ",
+             " _  ,|_| ,|_| ",
+             " _  ,|_| , _| "]);
+             
+print "Enter a number: ";
+var num = readln stdin;
+
+var line_1 = "";
+var line_2 = "";
+var line_3 = "";
+
+for i in 0..<num.len.int - 1 do
+   var digit : int = num.i.ord - 48;
+   line_1 = line_1 + leds.digit.[0..3];
+   line_2 = line_2 + leds.digit.[5..8];
+   line_3 = line_3 + leds.digit.[10..13];
+done
+
+println$ line_1;
+println$ line_2;
+println$ line_3;
