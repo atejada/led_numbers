@@ -12,7 +12,7 @@ var leds: [Character: String] = [
     "8": " _  ,|_| ,|_| ",
     "9": " _  ,|_| , _| "]
 
-print("Enter a number:")
+print("Enter a number: ", terminator: "")
 let num = readLine(strippingNewline: true)
 
 for i in 0...2{
