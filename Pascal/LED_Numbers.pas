@@ -35,9 +35,7 @@ begin
    begin
      lines := leds[(Ord(num[i]) - 48) + 1];
      for j := 1 to 4 do
-       begin
-         line_1 := line_1 + lines[j];
-       end;
+       line_1 := line_1 + lines[j];
      for j := 6 to 9 do
        line_2 := line_2 + lines[j];
      for j := 11 to 15 do
