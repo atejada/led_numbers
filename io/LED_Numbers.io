@@ -11,7 +11,7 @@ led atPut("8", " _  ,|_| ,|_| ")
 led atPut("9", " _  ,|_| , _| ")
 
 "Enter a number: " print
-number := ReadLine readLine
+number := File standardInput readLine
 
 line := method(a, b, led at(number at(a) asCharacter) split(",","\n") at(b) print)
 
