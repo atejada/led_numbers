@@ -1,0 +1,388 @@
+(ns phel\http
+  (:use InvalidArgumentException)
+  (:use Stringable))
+
+# ---
+# URI
+# ---
+
+(defstruct uri [scheme userinfo host port path query fragment]
+           Stringable
+           (__toString [this]
+                       (let [authority (str host)
+                             authority (if (and userinfo (not= userinfo ""))
+                                         (str userinfo "@" authority)
+                                         authority)
+                             authority (if port
+                                         (str authority ":" port)
+                                         authority)
+                             res ""
+                             res (if (and scheme (not= scheme ""))
+                                   (str res scheme ":")
+                                   res)
+                             res (if (or (not= authority "") (= scheme "file"))
+                                   (str res "//" authority)
+                                   res)
+                             res (str res path)
+                             res (if (and query (not= query ""))
+                                   (str res "?" query)
+                                   res)
+                             res (if (and fragment (not= fragment ""))
+                                   (str res "#" fragment)
+                                   res)]
+                         res)))
+
+(def- uri-host-port-regex "/^(.+)\:(\d+)$/")
+
+(defn- host-and-port-from-globals
+  "Extract the host and port from the `$_SERVER` array."
+  [& [server]]
+  (let [server (or server php/$_SERVER)
+        http-host (get server "HTTP_HOST")
+        server-name (get server "SERVER_NAME")
+        server-port (php/intval (get server "SERVER_PORT"))
+        matches (php/array)
+        match-result (when-not (nil? http-host) (php/preg_match uri-host-port-regex http-host matches))]
+    (cond
+      (and (not (nil? http-host)) (one? match-result))
+      [(get matches 1) (php/intval (get matches 2))]
+      (not (nil? http-host))
+      [http-host server-port]
+      [server-name server-port])))
+
+(defn uri-from-globals
+  "Extracts the URI from the `$_SERVER` variable."
+  [& [server]]
+  (let [server (or server php/$_SERVER)
+        scheme (cond
+                 (get server "HTTP_X_FORWARDED_PROTO") (get server "HTTP_X_FORWARDED_PROTO")
+                 (get server "REQUEST_SCHEME") (get server "REQUEST_SCHEME")
+                 (get server "HTTPS") (if (= "on" (get server "HTTPS")) "https" "http"))
+        path   (when (get server "REQUEST_URI")
+                 (first (php/explode "?" (get server "REQUEST_URI" ""))))
+        query  (get server "QUERY_STRING")
+        [h p]  (host-and-port-from-globals server)]
+    (uri scheme nil h p path query nil)))
+
+# See: https://www.php.net/manual/en/function.parse-url.php#114817
+(defn- encode-utf-8-url
+  "Prepares utf-8 urls from php/parse-url."
+  [url]
+  (php/preg_replace_callback
+   "%[^:/@?&=#]+%usD"
+   (fn [matches] (php/urlencode (php/aget matches 0)))
+   url))
+
+(defn uri-from-string
+  "Create a uri struct from a string"
+  [url]
+  (let [matches (php/array)
+        [prefix url] (if (one? (php/preg_match "%^(.*://\\[[0-9:a-f]+\\])(.*?)$%" url matches))
+                       [(php/aget matches 1) (php/aget matches 2)]
+                       ["" url])
+        encodedUrl (encode-utf-8-url url)
+        parts (php/parse_url (str prefix encodedUrl))
+        parts (php/array_map php/urldecode parts)]
+    (when-not parts
+      (throw (php/new InvalidArgumentException (str "This is not a valid uri: " url))))
+    (uri
+     (php/aget parts "scheme")
+     (if (php/aget parts "pass")
+       (str (php/aget parts "user") ":" (php/aget parts "pass"))
+       (php/aget parts "user"))
+     (php/aget parts "host")
+     (when (php/aget parts "port") (php/intval (php/aget parts "port")))
+     (php/aget parts "path")
+     (php/aget parts "query")
+     (php/aget parts "fragment"))))
+
+# -----
+# Files
+# -----
+
+(defstruct uploaded-file [tmp-file size error-status client-filename client-media-type])
+
+(declare create-uploaded-file-from-spec)
+
+(defn- normalize-nested-file-spec [files]
+  (let [res (transient {})]
+    (dofor [k :keys (get files "tmp_name")
+            :let [spec (php-associative-array
+                        "tmp_name" (get-in files ["tmp_name" k])
+                        "size" (get-in files ["size" k])
+                        "error" (get-in files ["error" k])
+                        "name" (get-in files ["name" k])
+                        "type" (get-in files ["type" k]))]]
+      (put res k (create-uploaded-file-from-spec spec)))
+    (persistent res)))
+
+(defn- create-uploaded-file-from-spec [value]
+  (if (php/is_array (get value "tmp_name"))
+    (normalize-nested-file-spec value)
+    (uploaded-file
+     (get value "tmp_name")
+     (php/intval (get value "size"))
+     (php/intval (get value "error"))
+     (get value "name")
+     (get value "type"))))
+
+(defn- normalize-files [files]
+  (let [res (transient {})]
+    (foreach [k v files]
+      (cond
+        (uploaded-file? v)
+        (put res k v)
+        (and (php/is_array v) (get v "tmp_name"))
+        (put res k (create-uploaded-file-from-spec v))
+        (indexed? v)
+        (put res k (normalize-files v))
+
+        (throw (php/new InvalidArgumentException "Invalid value in files specification"))))
+    (persistent res)))
+
+(defn files-from-globals
+  "Extracts the files from `$_FILES` and normalizes them to a map of \"uploaded-file\"."
+  [& [files]]
+  (normalize-files (or files php/$_FILES)))
+
+# -------
+# Headers
+# -------
+
+(defn headers-from-server
+  "Extracts all headers from the `$_SERVER` variable."
+  [& [server]]
+  (let [headers (transient {})
+        server (or server php/$_SERVER)]
+    (dofor [[k v] :pairs server
+            :let [redirected? (id 0 (php/strpos k "REDIRECT_"))
+                  redirected-key (when redirected? (php/substr k 9))
+                  k (if (and redirected? (not (php/array_key_exists redirected-key server)))
+                      redirected-key
+                      k)]]
+      (cond
+        (and v (id 0 (php/strpos k "HTTP_")))
+        (let [name (php/strtr (php/strtolower (php/substr k 5)) "_" "-")]
+          (put headers (keyword name) v))
+        (and v (id 0 (php/strpos k "CONTENT_")))
+        (let [name (str "content-" (php/strtolower (php/substr k 8)))]
+          (put headers (keyword name) v))))
+    (persistent headers)))
+
+# -------
+# Request
+# -------
+
+(defstruct request [method # HTTP Method ("GET", "POST", ...)
+                    uri # URI
+                    headers # Map with all headers
+                    parsed-body # parsed body ($_POST)
+                    query-params # Map with all query parameters ($_GET)
+                    cookie-params # Map with all cookie parameters ($_COOKIE)
+                    server-params # Map with all server parameters ($_SERVER)
+                    uploaded-files # Array of normalized uploaded files ($_FILES)
+                    version # HTTP Version
+                    attributes # consumer-specific data to enrich the request
+])
+
+(defn- get-method-from-globals
+  "Extracts the request method from `$_SERVER`."
+  [& [server]]
+  (let [method (get (or server php/$_SERVER) "REQUEST_METHOD")]
+    (if method
+      method
+      (throw (php/new InvalidArgumentException "cannot determine HTTP Method")))))
+
+(defn- post-global-valid [method headers]
+  (let [content-type (get headers :content-type "")
+        types (php/strtolower (php/trim (first (php/explode ";" content-type 2))))]
+    (and
+     (= method "POST")
+     (php/in_array types (php/array "application/x-www-form-urlencoded" "multipart/form-data")))))
+
+(defn request-from-globals-args
+  "Extracts a request from args."
+  [server get-parameter post-parameter cookies files]
+  (let [method (get-method-from-globals server)
+        uri (uri-from-globals server)
+        headers (headers-from-server server)
+        server-protocol (get server "SERVER_PROTOCOL")
+        version (if (string? server-protocol)
+                  (php/str_replace "HTTP/" "" server-protocol)
+                  "1.1")]
+    (request
+     method
+     uri
+     headers
+     (when (post-global-valid method headers) (php-array-to-map post-parameter))
+     (php-array-to-map get-parameter)
+     (php-array-to-map cookies)
+     (php-array-to-map server)
+     (normalize-files files)
+     version
+     {})))
+
+(defn request-from-globals
+  "Extracts a request from `$_SERVER`, `$_GET`, `$_POST`, `$_COOKIE` and `$_FILES`."
+  []
+  (request-from-globals-args php/$_SERVER php/$_GET php/$_POST php/$_COOKIE php/$_FILES))
+
+(defn request-from-map
+  [{:method method
+    :uri uri
+    :headers headers
+    :parsed-body parsed-body
+    :query-params query-params
+    :cookie-params cookie-params
+    :server-params server-params
+    :uploded-files uploaded-files
+    :version version
+    :attributes attributes}]
+  (request
+   method
+   (cond
+     (string? uri) (uri-from-string uri)
+     (uri? uri) uri
+     (nil? uri) nil
+     (throw (php/new InvalidArgumentException "Invalid :uri provided. Must be nil, string or uri")))
+   (or headers {})
+   parsed-body
+   (or query-params {})
+   (or cookie-params {})
+   (or server-params {})
+   (or uploaded-files [])
+   (or version "1.1")
+   (or attributes {})))
+
+# --------
+# Response
+# --------
+
+(defstruct response [status headers body version reason])
+
+(def- response-phrases {100 "Continue"
+                        101 "Switching Protocols"
+                        102 "Processing"
+                        103 "Early Hints"
+                        200 "OK"
+                        201 "Created"
+                        202 "Accepted"
+                        203 "Non-Authoritative Information"
+                        204 "No Content"
+                        205 "Reset Content"
+                        206 "Partial Content"
+                        207 "Multi-Status"
+                        208 "Already Reported"
+                        226 "IM Used"
+                        300 "Multiple Choices"
+                        301 "Moved Permanently"
+                        302 "Found"
+                        303 "See Other"
+                        304 "Not Modified"
+                        305 "Use Proxy"
+                        307 "Temporary Redirect"
+                        308 "Permanent Redirect"
+                        400 "Bad Request"
+                        401 "Unauthorized"
+                        402 "Payment Required"
+                        403 "Forbidden"
+                        404 "Not Found"
+                        405 "Method Not Allowed"
+                        406 "Not Acceptable"
+                        407 "Proxy Authentication Required"
+                        408 "Request Timeout"
+                        409 "Conflict"
+                        410 "Gone"
+                        411 "Length Required"
+                        412 "Precondition Failed"
+                        413 "Payload Too Large"
+                        414 "URI Too Long"
+                        415 "Unsupported Media Type"
+                        416 "Range Not Satisfiable"
+                        417 "Expectation Failed"
+                        418 "I\'m a teapot"
+                        421 "Misdirected Request"
+                        422 "Unprocessable Entity"
+                        423 "Locked"
+                        424 "Failed Dependency"
+                        425 "Too Early"
+                        426 "Upgrade Required"
+                        428 "Precondition Required"
+                        429 "Too Many Requests"
+                        431 "Request Header Fields Too Large"
+                        451 "Unavailable For Legal Reasons"
+                        500 "Internal Server Error"
+                        501 "Not Implemented"
+                        502 "Bad Gateway"
+                        503 "Service Unavailable"
+                        504 "Gateway Timeout"
+                        505 "HTTP Version Not Supported"
+                        506 "Variant Also Negotiates"
+                        507 "Insufficient Storage"
+                        508 "Loop Detected"
+                        510 "Not Extended"
+                        511 "Network Authentication Required"})
+
+(defn response-from-map
+  "Creates a response struct from a map. The map can have the following keys:
+  * `:status` The HTTP Status (default 200)
+  * `:headers` A map of HTTP Headers (default: empty map)
+  * `:body` The body of the response (default: empty string)
+  * `:version` The HTTP Version (default: 1.1)
+  * `:reason` The HTTP status reason. If not provided a common status reason is taken"
+  [{:status status :headers headers :body body :version version :reason reason}]
+  (let [status (or status 200)
+        headers (or headers {})
+        body (or body "")
+        version (or version "1.1")
+        reason (or reason (get response-phrases status) "")]
+    (response status headers body version reason)))
+
+(def create-response-from-map {:deprecated "Use response-from-map"} response-from-map)
+
+(defn response-from-string
+  "Create a response from a string."
+  [s]
+  (create-response-from-map {:body s}))
+
+(def create-response-from-string {:deprecated "Use response-from-string"} response-from-string)
+
+(defn- emit-status-line [{:status status :reason reason :version version}]
+  (when-not (php/headers_sent)
+    (let [version (or version "1.1")
+          status (or status 200)
+          reason (or reason (get response-phrases status))]
+      (php/header
+       (php/sprintf
+        "HTTP/%s %d%s"
+        version
+        status
+        (if reason (str " " reason) ""))
+       true
+       status))))
+
+(defn- normalize-header-name [header-name]
+  (when-not (or (keyword? header-name) (string? header-name))
+    (throw (php/new InvalidArgumentException (str "Header must be a keyword or string. Given: " header-name))))
+  (php/ucwords (name header-name) "-"))
+
+(defn- emit-headers [{:status status :headers headers}]
+  (when-not (php/headers_sent)
+    (dofor [[header values] :pairs headers
+            :let [normalized-name (normalize-header-name header)
+                  replace (and (id 0 (php/strcasecmp normalized-name "Content-Type"))
+                               (not (id 0 (php/strcasecmp normalized-name "Set-Cookie"))))]]
+      (cond
+        (string? values)
+        (php/header (php/sprintf "%s: %s" normalized-name values) replace status)
+        (indexed? values)
+        (dofor [value :in values]
+          (php/header (php/sprintf "%s: %s" normalized-name value) replace status))))))
+
+(defn emit-response
+  "Emits the response."
+  [response]
+  (emit-status-line response)
+  (emit-headers response)
+  (php/echo (get response :body))
+  nil)

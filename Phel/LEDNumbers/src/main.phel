@@ -1,0 +1,31 @@
+(ns LEDNumbers\main 
+	(:require phel\str))
+
+(def leds (hash-map "0" (list " _  " "| | " "|_| ") 
+                    "1" (list "  " "| " "| ")
+                    "2" (list " _  " " _| " "|_  ") 
+                    "3" (list "_  " "_| " "_| ")
+                    "4" (list "    " "|_| " "  | ") 
+                    "5" (list " _  " "|_  " " _| ")
+                    "6" (list " _  " "|_  " "|_| ") 
+                    "7" (list "_   " " |  " " |  ")
+                    "8" (list " _  " "|_| " "|_| ") 
+                    "9" (list " _  " "|_| " " _| ")))
+
+(defn toList [num]
+  (str/split num "//")	
+)
+
+(defn showLED [num]
+	(for [x :range [0 3]]
+		(foreach [v (toList num)]
+			(if (empty? v)
+			[]
+				(print (get (get leds v) x))
+			)
+		)
+		(println)
+	)
+)
+
+(showLED 1953)

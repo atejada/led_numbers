@@ -1,0 +1,19 @@
+{
+    "name": "blag/led_numbers",
+    "description": "LED Numbers",
+    "type": "project",
+    "autoload": {
+        "psr-4": {
+            "Blag\\LedNumbers\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Blag",
+            "email": "atejada@gmail.com"
+        }
+    ],
+    "require": {
+        "phel-lang/phel-lang": "^0.16.1"
+    }
+}

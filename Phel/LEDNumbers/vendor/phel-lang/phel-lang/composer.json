@@ -1,0 +1,101 @@
+{
+    "name": "phel-lang/phel-lang",
+    "description": "Phel is a functional programming language that transpiles to PHP",
+    "license": "MIT",
+    "type": "library",
+    "keywords": [
+        "phel",
+        "lisp",
+        "functional",
+        "language"
+    ],
+    "authors": [
+        {
+            "name": "Jens Haase",
+            "email": "je.haase@gmail.com"
+        },
+        {
+            "name": "Jose M. Valera Reales",
+            "email": "chemaclass@outlook.es",
+            "homepage": "https://chemaclass.com"
+        }
+    ],
+    "homepage": "https://phel-lang.org/",
+    "require": {
+        "php": ">=8.2",
+        "gacela-project/gacela": "^1.9",
+        "phpunit/php-timer": "^6.0",
+        "symfony/console": "^7.0"
+    },
+    "require-dev": {
+        "ext-readline": "*",
+        "ergebnis/composer-normalize": "^2.45",
+        "friendsofphp/php-cs-fixer": "^3.65",
+        "phpbench/phpbench": "^1.3",
+        "phpstan/phpstan": "^2.0",
+        "phpunit/phpunit": "^10.5",
+        "psalm/plugin-phpunit": "^0.19",
+        "rector/rector": "^2.0",
+        "symfony/var-dumper": "^7.2",
+        "vimeo/psalm": "^5.26"
+    },
+    "autoload": {
+        "psr-4": {
+            "Phel\\": "src/php/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "PhelTest\\": "tests/php"
+        }
+    },
+    "bin": [
+        "bin/phel"
+    ],
+    "config": {
+        "allow-plugins": {
+            "composer/package-versions-deprecated": true,
+            "ergebnis/composer-normalize": true
+        },
+        "platform": {
+            "php": "8.2"
+        },
+        "sort-packages": true
+    },
+    "scripts": {
+        "post-install-cmd": "tools/git-hooks/init.sh",
+        "csfix": "./vendor/bin/php-cs-fixer fix",
+        "csrun": "./vendor/bin/php-cs-fixer fix --dry-run",
+        "fix": [
+            "@rector",
+            "@csfix"
+        ],
+        "phpbench": "./vendor/bin/phpbench run --report=aggregate --ansi",
+        "phpbench-base": "./vendor/bin/phpbench run --tag=baseline --report=aggregate --progress=plain --ansi",
+        "phpbench-ref": "./vendor/bin/phpbench run --ref=baseline --report=aggregate --progress=plain --ansi",
+        "phpstan": "./vendor/bin/phpstan --memory-limit=516M",
+        "psalm": "./vendor/bin/psalm --no-cache",
+        "rector": "./vendor/bin/rector process",
+        "rectorrun": "./vendor/bin/rector process --dry-run",
+        "static-clear-cache": [
+            "vendor/bin/psalm --clear-cache",
+            "vendor/bin/phpstan clear-result-cache"
+        ],
+        "test": "@test-all",
+        "test-all": [
+            "@static-clear-cache",
+            "@test-quality",
+            "@test-compiler",
+            "@test-core"
+        ],
+        "test-compiler": "./vendor/bin/phpunit --testsuite=unit,integration --log-junit=data/log-junit.xml",
+        "test-compiler:coverage": "XDEBUG_MODE=coverage ./vendor/bin/phpunit --testsuite=unit,integration --coverage-html=data/coverage-html --coverage-xml=data/coverage-xml --log-junit=data/coverage-xml/junit.xml",
+        "test-core": "./bin/phel test",
+        "test-quality": [
+            "@csrun",
+            "@psalm",
+            "@phpstan",
+            "@rectorrun"
+        ]
+    }
+}
