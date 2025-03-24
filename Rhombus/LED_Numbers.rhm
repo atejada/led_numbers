@@ -1,0 +1,26 @@
+#lang rhombus
+
+def led = Map{Char"0": " _  | | |_| ",
+              Char"1": "     |   |  ",
+              Char"2": " _   _| |_  ",
+              Char"3": " _   _|  _| ",
+              Char"4": "    |_|   | ",
+              Char"5": " _  |_   _| ",
+              Char"6": " _  |_  |_| ",
+              Char"7": "_    |   |  ",
+              Char"8": " _  |_| |_| ",
+              Char"9": " _  |_|  _| "}
+
+fun getLED(num):
+  def len = String.length(num)
+  def mutable line1 = ""
+  def mutable line2 = ""
+  def mutable line3 = ""
+  for:
+    each x in 0..len
+    line1 := String.append(line1, " ", String.substring(led[num[x]],0,3))
+    line2 := String.append(line2, " ", String.substring(led[num[x]],4,7))
+    line3 := String.append(line3, " ", String.substring(led[num[x]],8,11))
+  println(line1)
+  println(line2)
+  println(line3)
