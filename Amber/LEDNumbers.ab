@@ -1,0 +1,29 @@
+import { split_chars, parse_int, split } from "std/text"
+
+main(args) {
+    let leds = [" _  ,| | ,|_| ",
+                "    , |  , |  ",
+                " _  , _| ,|_  ",
+                " _  , _| , _| ",
+                "    ,|_| ,  | ",
+                " _  ,|_  , _| ",
+                " _  ,|_  ,|_| ",
+                "_   , |  , |  ",
+                " _  ,|_| ,|_| ",
+                " _  ,|_| , _| "]
+
+    let nums = split_chars(args[1])
+    let line1 = ""
+    let line2 = ""
+    let line3 = ""
+    for _, digit in nums{
+        let parts = split(leds[parse_int(digit)?], ",")
+        line1 = line1 + parts[0]
+        line2 = line2 + parts[1]
+        line3 = line3 + parts[2]
+    }
+	
+    echo line1
+    echo line2
+    echo line3
+}
