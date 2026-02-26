@@ -12,8 +12,6 @@ leds = {"0": {" _  ","| | ","|_| "},
 io.write "Enter a number: "
 num = io.read!
 
-line = ""
-
 for i = 1, 3
     for j = 1, #num
         io.write leds[num\sub(j, j)][i]
