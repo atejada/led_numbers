@@ -1,0 +1,34 @@
+method main() {
+	def led := HashMap<Int, String>()
+		led[0] := " _  ,| | ,|_| "
+		led[1] := "    , |  , |  "
+		led[2] := " _  , _| ,|_  "
+		led[3] := " _  , _| , _| "
+		led[4] := "    ,|_| ,  | "
+		led[5] := " _  ,|_  , _| "
+		led[6] := " _  ,|_  ,|_| "
+		led[7] := "_   , |  , |  "
+		led[8] := " _  ,|_| ,|_| "
+		led[9] := " _  ,|_| , _| "
+		
+	Console.print("Enter a number: ")
+	def number := Console.readLine()
+	def line1 := MutableString()
+	def line2 := MutableString()
+	def line3 := MutableString()
+	
+	for i in 0..number.length{
+		def line := led[number[i].toString.asInt].split(",")
+		line1.append(line[0])
+		line2.append(line[1])
+		line3.append(line[2])
+	}
+	
+	def line_1 := line1.finish()
+	def line_2 := line2.finish()
+	def line_3 := line3.finish()
+	
+	Console.printLine(line_1)
+	Console.printLine(line_2)
+	Console.printLine(line_3)
+}
