@@ -1,0 +1,42 @@
+use "std/strings"
+use "std/os"
+use "std/conv"
+
+fn main() {
+	 let led: map[i8]str  = {
+        0: " _  ,| | ,|_| ",
+        1: "  ,| ,| ",
+        2: " _  , _| ,|_  ",
+        3: "_  ,_| ,_| ",
+        4: "    ,|_| ,  | ",
+        5: " _  ,|_  , _| ",
+        6: " _  ,|_  ,|_| ",
+        7: "_   , |  , |  ",
+        8: " _  ,|_| ,|_| ",
+        9: " _  ,|_| , _| "
+    }
+
+  println("Enter a number:")
+	let mut buf: []byte = make([]byte, 32)
+	
+	let mut stdin = os::Stdin()
+
+	n := stdin.ReadSync(buf)!
+
+  number := strings::TrimSpace(str(buf[:n]))
+    
+  let mut i = 0
+  let mut line1 = ""
+  let mut line2 = ""
+  let mut line3 = ""    
+	for i < (len(number)); i++ {
+		let line: str = led[i8(number[i] - '0')]
+		let lines = strings::Split(line, ",")
+		line1 += lines[0] 
+		line2 += lines[1]
+		line3 += lines[2]        
+  }
+  println(line1)
+  println(line2)
+  println(line3)
+}
