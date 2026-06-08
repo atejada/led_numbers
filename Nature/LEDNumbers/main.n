@@ -1,0 +1,41 @@
+import fmt
+import fs
+
+fn main() {
+	var led = {0:" _  ,| | ,|_| ", 
+	           1:"  ,| ,| ", 
+	           2:" _  , _| ,|_  ", 
+	           3:"_  ,_| ,_| ",
+	           4:"    ,|_| ,  | ",
+	           5:" _  ,|_  , _| ",
+	           6:" _  ,|_  ,|_| ",
+	           7:"_   , |  , |  ",
+	           8:" _  ,|_| ,|_| ",
+	           9:" _  ,|_| , _| ",
+	          }
+
+	fmt.printf('Enter a number: ')
+	var sin = fs.stdin()
+    [u8] buf = [0;1024]
+    var n = sin.read(buf)
+    var input = (buf[..n] as string).trim([' ', '\n', '\r', '\t'])
+
+	var line1 = ""
+	var line2 = ""
+	var line3 = ""
+
+    for int i = 0; i < input.len(); i += 1 {
+		var digit = input[i] as int - 48
+		var list = led[digit].split(',')
+		line1 = line1 + list[0]
+		line2 = line2 + list[1]
+		line3 = line3 + list[2]
+	}
+	
+	fmt.printf(line1 + "\n")
+	fmt.printf(line2+ "\n")
+	fmt.printf(line3 + "\n")
+}
+
+
+
