@@ -1,0 +1,33 @@
+require 'hashmap'
+require 'io'
+require 'string'
+
+local led: hashmap(string, string)
+led["0"] = " _  ,| | ,|_| "
+led["1"] = "    , |  , |  "
+led["2"] = " _  , _| ,|_  "
+led["3"] = " _  , _| , _| "
+led["4"] = "    ,|_| ,  | "
+led["5"] = " _  ,|_  , _| "
+led["6"] = " _  ,|_  ,|_| "
+led["7"] = "_   , |  , |  "
+led["8"] = " _  ,|_| ,|_| "
+led["9"] = " _  ,|_| , _| "
+
+print("Enter a number:")
+local number = io.read()
+
+local line1 = ""
+local line2 = ""
+local line3 = ""
+
+for i = 1,string.len(number) do
+	local digit = string.sub(number,i,i)
+	line1 = line1 .. string.sub(led[digit],1,4)
+	line2 = line2 .. string.sub(led[digit],6,9)
+	line3 = line3 .. string.sub(led[digit],11,14)
+end
+
+print(line1)
+print(line2)
+print(line3)
