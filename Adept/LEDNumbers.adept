@@ -27,9 +27,9 @@ func main {
 	for(i int = 0; i < number.length; i += 1) {
 		pattern = led_pattern(number[i])
 		leds = split(&pattern, ",")
-		line1 += leds[0]
-		line2 += leds[1]
-		line3 += leds[2]
+		line1 = line1 + leds[0]
+		line2 = line2 + leds[1]
+		line3 = line3 + leds[2]
 	}
 	
 	print(line1)

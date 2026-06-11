@@ -25,6 +25,7 @@ function readLine() {
     return line;
 }
 
+print("Enter a number: ")
 local number = readLine();
 
 local line1 = ""
