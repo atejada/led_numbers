@@ -1,5 +1,4 @@
 import basics
-import string_util
 
 func led_pattern(digit ubyte) String {
     if digit == 48 return " _  ,| | ,|_| "
