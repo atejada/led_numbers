@@ -1,0 +1,75 @@
+@module "main"
+
+@link("System")
+pub const getchar -> fn () int;
+
+pub const main -> fn () int {
+    let leds: [*byte; 10];
+    leds[0] = " _ ,| |,|_|";
+    leds[1] = "   ,  |,  |";
+    leds[2] = " _ , _|,|_ ";
+    leds[3] = " _ , _|, _|";
+    leds[4] = "   ,|_|,  |";
+    leds[5] = " _ ,|_ , _|";
+    leds[6] = " _ ,|_ ,|_|";
+    leds[7] = " _ ,  |,  |";
+    leds[8] = " _ ,|_|,|_|";
+    leds[9] = " _ ,|_|, _|";
+
+    let input_buffer: [byte; 128];
+    let length: int = 0;
+
+    output("Enter a number: ");
+
+    let ch: int = getchar();
+    loop (ch != 10 && ch != -1) {
+        if (ch < 48 || ch > 57) {
+            output("Enter digits 0 through 9 only.\n");
+            return 1;
+        }
+
+        if (length == 127) {
+            output("Enter at most 127 digits.\n");
+            return 1;
+        }
+
+        input_buffer[length] = cast<byte>(ch);
+        length = length + 1;
+        ch = getchar();
+    }
+
+    if (length == 0) {
+        output("Enter at least one digit.\n");
+        return 1;
+    }
+
+    let piece: [byte; 4];
+    piece[3] = cast<byte>(0);
+
+    let row: int = 0;
+    loop (row < 3) {
+        let start: int = row * 4;
+        let position: int = 0;
+
+        loop (position < length) {
+            let digit: int = cast<int>(input_buffer[position]) - 48;
+            let pattern: *byte = leds[digit];
+
+            piece[0] = pattern[start];
+            piece[1] = pattern[start + 1];
+            piece[2] = pattern[start + 2];
+
+            if (position > 0) {
+                output(" ");
+            }
+
+            output(&piece[0]);
+            position = position + 1;
+        }
+
+        output("\n");
+        row = row + 1;
+    }
+
+    return 0;
+}
